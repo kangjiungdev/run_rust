@@ -3,11 +3,10 @@ use std::cmp::Ordering;
 use std::io::{self, Write};
 
 fn main() {
-    println!("Guess the number!");
+    println!("Guess the number!\nType \"quit\" to quit the game.");
 
     let secret_number = rand::thread_rng().gen_range(1..=100);
 
-    println!("Plesase input your guess.");
     let mut attempts_left: u8 = 5;
 
     println!("You have {attempts_left} tries. Please input your guess.");
@@ -37,8 +36,12 @@ fn main() {
                     println!("You win!");
                     return;
                 }
-            }
+            };
         } else {
+            if guess.trim() == "quit" {
+                println!("Bye!");
+                return;
+            }
             println!("Please enter a number from 1 to 100");
         }
     }
