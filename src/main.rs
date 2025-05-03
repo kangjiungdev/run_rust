@@ -56,7 +56,7 @@ fn convert_temperature(method: u8) -> (f64, String, bool) {
             // 섭씨 -> 화씨 변환
             if !(-273..=5500000000000).contains(&value) {
                 // 섭씨 범위 초과
-                println!("{}", message);
+                println!("에러: {}", message);
                 continue;
             }
 
@@ -66,7 +66,7 @@ fn convert_temperature(method: u8) -> (f64, String, bool) {
             // 화씨 -> 섭씨 변환
             if !(-459..=10000000000000).contains(&value) {
                 // 화씨 범위 초과
-                println!("{}", message);
+                println!("에러: {}", message);
                 continue;
             }
 
