@@ -1,50 +1,120 @@
-use rand::Rng;
-use std::cmp::Ordering;
-use std::io::{self, Write};
+use std::io::{Write, stdin, stdout};
+
+const ONE_OR_TWO_ERROR: &str = "에러: 1 또는 2를 입력해 주세요";
 
 fn main() {
-    println!("Guess the number!\nType \"quit\" to quit the game.");
+    let method = choose_one_or_two();
+    let (converted_temperature, temperature_unit, success) = convert_temperature(method);
+    if success {
+        println!("결과: {temperature_unit} {converted_temperature}도");
+    }
+}
 
-    let secret_number = rand::thread_rng().gen_range(1..=100);
+fn convert_temperature(method: u8) -> (f64, String, bool) {
+    const CELSIUS_RANGE: &str = "−273 ~ (5.5 × 10¹²)";
+    const FAHRENHEIT_RANGE: &str = "−459 ~ 10¹³";
 
-    let mut attempts_left: u8 = 5;
+    let temperature_unit: String;
+    let message: String;
+    if method == 1 {
+        temperature_unit = str_type_to_string_type("섭씨");
+        message =
+            format!("올바른 {temperature_unit} 온도(정수)를 입력해 주세요(범위: {CELSIUS_RANGE})");
+    } else {
+        temperature_unit = str_type_to_string_type("화씨");
+        message = format!(
+            "올바른 {temperature_unit} 온도(정수)를 입력해 주세요(범위: {FAHRENHEIT_RANGE})"
+        );
+    };
 
-    println!("You have {attempts_left} tries. Please input your guess.");
+    loop {
+        let mut temperature = String::new();
 
-    while attempts_left != 0 {
-        let mut guess: String = String::new();
-        print!("\n({attempts_left} tries left) Your guess: ");
-        io::stdout().flush().unwrap();
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-        let guess = guess.trim();
-        if let Ok(number) = guess.parse::<u8>() {
-            if number > 100 || number == 0 {
-                println!("Please enter a number from 1 to 100");
+        print!("{message}: ");
+
+        stdout().flush().unwrap();
+        let success = stdin().read_line(&mut temperature);
+        let (ok, _) = is_ok(
+            success,
+            str_type_to_string_type("Error: couldn't get input value"),
+        );
+        if !ok {
+            break (0.00, str_type_to_string_type(""), false);
+        }
+
+        let success = temperature.trim().parse::<i64>();
+        let err_message = format!("에러: {message}");
+
+        let (ok, value) = is_ok(success, err_message);
+        if !ok {
+            continue;
+        }
+
+        let value = value.unwrap(); // 유저가 입력한 온도
+
+        if method == 1 {
+            // 섭씨 -> 화씨 변환
+            if !(-273..=5500000000000).contains(&value) {
+                // 섭씨 범위 초과
+                println!("{}", message);
                 continue;
             }
-            attempts_left -= 1;
-            match number.cmp(&secret_number) {
-                Ordering::Less => {
-                    println!("Too small!");
-                }
-                Ordering::Greater => {
-                    println!("Too big!");
-                }
-                Ordering::Equal => {
-                    println!("You win!");
-                    return;
-                }
-            };
+
+            let result = value as f64 * (9.00 / 5.00) + 32.00;
+            break (result, str_type_to_string_type("화씨"), true);
         } else {
-            if guess.trim() == "quit" {
-                println!("Bye!");
-                return;
+            // 화씨 -> 섭씨 변환
+            if !(-459..=10000000000000).contains(&value) {
+                // 화씨 범위 초과
+                println!("{}", message);
+                continue;
             }
-            println!("Please enter a number from 1 to 100");
+
+            let result = 5.00 / 9.00 * (value as f64 - 32.00);
+            break (result, str_type_to_string_type("섭씨"), true);
         }
     }
-    println!("\nYou lose.");
-    println!("Correct answer: {secret_number}");
+}
+
+fn str_type_to_string_type(text: &str) -> String {
+    String::from(text)
+}
+
+// Choose to convert Celsius to Fahrenheit or Fahrenheit to Celsius
+fn choose_one_or_two() -> u8 {
+    loop {
+        let mut method = String::new();
+        print!("섭씨 -> 화씨 변환은 1번\n화씨 -> 섭씨 변환은 2번을 입력하세요: ");
+        stdout().flush().unwrap();
+        let success = stdin().read_line(&mut method);
+        let (ok, _) = is_ok(
+            success,
+            str_type_to_string_type("Error: couldn't get input value"),
+        );
+        if !ok {
+            continue;
+        }
+
+        let success = method.trim().parse::<u8>();
+        let (ok, value) = is_ok(success, str_type_to_string_type(ONE_OR_TWO_ERROR));
+        if !ok {
+            continue;
+        }
+        let method = value.unwrap();
+        if method != 1 && method != 2 {
+            println!("{ONE_OR_TWO_ERROR}\n");
+            continue;
+        }
+        break method;
+    }
+}
+
+fn is_ok<T, E>(success: Result<T, E>, err_message: String) -> (bool, Option<T>) {
+    match success {
+        Ok(value) => (true, Some(value)),
+        Err(_) => {
+            println!("{err_message}\n");
+            (false, None)
+        }
+    }
 }
