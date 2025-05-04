@@ -19,7 +19,7 @@ fn main() {
         };
         let mut a = 0; // 첫번째 수
         let mut b = 0; // 두번째 수
-        let mut c = 0; // a b 반복 횟수
+        let mut c: u8 = 0; // a 구해야 하는지 b 구해야 하는지 판단. a 구할 땐 0, b 구할 땐 1.
         for _ in 1..=input_value {
             if a == 0 {
                 // 0으로 시작.
