@@ -23,14 +23,14 @@ fn main() {
         for _ in 1..=input_value {
             if a == 0 {
                 // 0으로 시작.
-                b += 1;
+                b = 1;
             }
             if c == 0 {
                 a += b;
-                c -= 1;
+                c += 1;
             } else {
                 b += a;
-                c += 1;
+                c -= 1;
             }
         }
         let result = if input_value % 2 == 0 { a } else { b };
