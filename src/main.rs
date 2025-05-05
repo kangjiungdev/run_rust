@@ -16,10 +16,12 @@ fn main() {
             continue;
         }
         let success = verse_number.trim().parse::<u8>();
-        if success.is_err() {
-            continue;
+        if let Ok(value) = success {
+            if value > 0 && value <= 12 {
+                break value;
+            }
         }
-        break success.unwrap();
+        println!("에러: 1~12 사이의 숫자를 입력하세요\n");
     };
     print_lyrics(verse);
 }
