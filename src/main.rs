@@ -62,11 +62,6 @@ fn print_lyrics(verse: u8) {
         }
         println!("{NEXT_LINE}");
     }
-
-    let mut i = 0;
-    while (i as u8) < verse {
-        i += 1;
-    }
 }
 
 fn create_string(text: &str) -> String {
