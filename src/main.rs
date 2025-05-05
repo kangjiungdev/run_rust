@@ -44,15 +44,14 @@ fn print_lyrics(verse: u8) {
 
     println!("{NEXT_LINE}");
 
-    let mut i = 0;
-    while (i as u8) < verse {
-        let day = &lyrics[i].day;
+    for i in 0..verse {
+        let day = &lyrics[i as usize].day;
         let first_lyric = format!("On the {day} day of Christmas\nMy true love gave to me");
         let mut a = vec![];
-        for lyric in lyrics[..i + 1].iter().rev() {
+        for lyric in lyrics[..i as usize + 1].iter().rev() {
             a.push(lyric.lyric.clone());
         }
-        if !a.is_empty() {
+        if a.len() > 1 {
             let index = a.len() - 1;
             a[index] = String::from("And a partridge in a pear tree.");
         }
@@ -62,6 +61,10 @@ fn print_lyrics(verse: u8) {
             println!("{el}");
         }
         println!("{NEXT_LINE}");
+    }
+
+    let mut i = 0;
+    while (i as u8) < verse {
         i += 1;
     }
 }
