@@ -25,7 +25,7 @@ func compressText(text string) string {
 		if textArray[i] == previousChar {
 			equalCharLoopNumber++
 		} else { // 이전 문자랑 현재 루프에서 확인하는 문자랑 다를 때
-			// 첫번째 이전 문자는 존재하지 않기 때문에 첫번째로 시작 될 때(previousChar가 0일 때=함수 시작 시 previousChar 자동 초기화. 문자에 0을 넣을 가능성은 개무시) 무시함
+			// 첫번째 이전 문자는 존재하지 않기 때문에 첫번째로 시작 될 때(previousChar가 0일 때=함수 시작 시 previousChar 자동 초기화. 문자에 rune 0을 넣을 가능성은 개무시) 무시함
 			if previousChar != 0 {
 				result = append(result, charStruct{char: string(previousChar), loopNumber: equalCharLoopNumber})
 				equalCharLoopNumber = 1
